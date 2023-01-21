@@ -9,22 +9,27 @@ namespace afmt = std;
 namespace afmt = fmt;
 #endif
 
+int getTzOffset()
+{
+	const std::time_t epoch_plus_11h = 60 * 60 * 11;
+	struct tm lt;
+	struct tm gmt;
+#ifdef _WIN32
+	localtime_s(&lt, &epoch_plus_11h);
+	gmtime_s(&gmt, &epoch_plus_11h);
+#else
+	localtime_r(&epoch_plus_11h, &lt);
+	gmtime_r(&epoch_plus_11h, &gmt);
+#endif
+	return lt.tm_hour - gmt.tm_hour;
+}
+
 template<typename T>
 int modulo(T& value, int div)
 {
 	int r = value % div;
 	value /= div;
 	return r;
-}
-
-int getTzOffset()
-{
-	const std::time_t epoch_plus_11h = 60 * 60 * 11;
-	struct tm lt;
-	localtime_s(&lt, &epoch_plus_11h);
-	struct tm gmt;
-	gmtime_s(&gmt, &epoch_plus_11h);
-	return lt.tm_hour - gmt.tm_hour;
 }
 
 std::string getTimeStamp()
