@@ -51,8 +51,24 @@ std::string getTimeStamp()
 	return afmt::format("{}d {:02}:{:02}:{:02}.{:03}", value, hour, min, sec, ms);
 }
 
+double some_work(int k)
+{
+	double s = 0.0;
+	for (int i = 0; i < 100000; i++)
+		s += 1.0 / (k + cos(i) * cos(i));
+	return s;
+}
+
 int main(int argc, char** argv)
 {
 	std::cout << "Hello world" << std::endl;
 	std::cout << getTimeStamp() << std::endl;
+
+	//
+	for (int i = 1; i < 10; i++)
+	{
+		std::cout << some_work(i) << std::endl;
+		std::cout << getTimeStamp() << std::endl;
+
+	}
 }
