@@ -16,8 +16,20 @@ int modulo(long long& value, int div)
 	return r;
 }
 
+int getTzOffset()
+{
+	const std::time_t epoch_plus_11h = 60 * 60 * 11;
+	struct tm lt;
+	localtime_s(&lt, &epoch_plus_11h);
+	struct tm gmt;
+	gmtime_s(&gmt, &epoch_plus_11h);
+	return lt.tm_hour - gmt.tm_hour;
+}
+
 std::string getTimeStamp()
 {
+	static int tzOffset = getTzOffset();
+
 	auto now = std::chrono::system_clock::now();
 #ifdef _WIN32
 	// operator<< not supported on gcc
@@ -28,8 +40,9 @@ std::string getTimeStamp()
 	auto ms = modulo(value, 1000);
 	auto sec = modulo(value, 60);
 	auto min = modulo(value, 60);
+	value += tzOffset;
 	auto hour = modulo(value, 24);
-	return afmt::format("{}d {}:{}:{}.{}", value, hour, min, sec, ms);
+	return afmt::format("{}d {:02}:{:02}:{:02}.{:03}", value, hour, min, sec, ms);
 }
 
 int main(int argc, char** argv)
