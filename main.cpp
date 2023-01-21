@@ -9,7 +9,8 @@ namespace afmt = std;
 namespace afmt = fmt;
 #endif
 
-int modulo(long long& value, int div)
+template<typename T>
+int modulo(T& value, int div)
 {
 	int r = value % div;
 	value /= div;
