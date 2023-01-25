@@ -32,6 +32,32 @@ int modulo(T& value, int div)
 	return r;
 }
 
+int sumDays[48] =
+{
+	31,		59,		90,		120,	151,	181,	212,	243,	273,	304,	334,	365, // 1970
+	396,	424,	455,	485,	516,	546,	577,	608,	638,	669,	699,	730, // 1971
+            //29F
+	761,	790,	821,	851,	882,	912,	943,	974,	1004,	1035,	1065,	1096, // 1972, leap year
+	1127,	1155,	1186,	1216,	1247,	1277,	1308,	1339,	1369,	1400,	1430,	1461  // 1973
+};
+
+// Input: Nb of days since 1-Jan-1970
+std::string getDate(int days)
+{
+	days++; // Nb of days since 0-Jan-1970
+	// 4 years = 4*365+1 = 1461
+	int group4y = days / 1461;
+	days = days - 1461 * group4y;  // days < 1461
+	int month = 0;
+	while (days > sumDays[month])
+		month++;
+	if (month > 0)
+		days = days - sumDays[month - 1];
+	int extra_years = month / 12; // [0,..,3]
+	month = month - 12 * month / 12;
+	return afmt::format("{:04}/{:02}/{:02}", 1970 + 4 * group4y + extra_years, month + 1, days);
+}
+
 std::string getTimeStamp()
 {
 	static int tzOffset = getTzOffset();
@@ -48,7 +74,11 @@ std::string getTimeStamp()
 	auto min = modulo(value, 60);
 	value += tzOffset;
 	auto hour = modulo(value, 24);
-	return afmt::format("{}d {:02}:{:02}:{:02}.{:03}", value, hour, min, sec, ms);
+
+	auto str = getDate((int)value);
+
+
+	return afmt::format("{} : {}d {:02}:{:02}:{:02}.{:03}", str, value, hour, min, sec, ms);
 }
 
 double some_work(int k)
