@@ -44,17 +44,16 @@ int sumDays[48] =
 // Input: Nb of days since 1-Jan-1970
 std::string getDate(int days)
 {
-	days++; // Nb of days since 0-Jan-1970
 	// 4 years = 4*365+1 = 1461
 	int group4y = days / 1461;
-	days = days - 1461 * group4y;  // days < 1461
+	days = 1 + days - 1461 * group4y;  // 1<= days <= 1461
 	int month = 0;
 	while (days > sumDays[month])
 		month++;
 	if (month > 0)
 		days = days - sumDays[month - 1];
 	int extra_years = month / 12; // [0,..,3]
-	month = month - 12 * month / 12;
+	month = month - 12 * extra_years;
 	return afmt::format("{:04}/{:02}/{:02}", 1970 + 4 * group4y + extra_years, month + 1, days);
 }
 
@@ -89,8 +88,26 @@ double some_work(int k)
 	return s;
 }
 
+void test()
+{
+	for (int d = 17000; d <= 19000; d++)
+	{
+		std::cout << d << "," << getDate(d) << std::endl;
+	}
+}
+
+void test2()
+{
+	int d = 17531;
+	std::cout << d << "," << getDate(d) << std::endl;
+}
+
+
+
 int main(int argc, char** argv)
 {
+	test(); return 0;
+
 	std::cout << "Hello world" << std::endl;
 	std::cout << getTimeStamp() << std::endl;
 
